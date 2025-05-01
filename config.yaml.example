@@ -1,0 +1,12 @@
+concurrent_requests: 5  # Number of concurrent requests to make
+batch_wait_time: 2     # Time to wait between batches in seconds
+output_dir: "output"   # Directory to store thumbnails and output files
+thumbnails_dir: "thumbnails"  # Subdirectory for thumbnails
+thumbnail_size: [320, 180]  # Width, Height of thumbnails
+
+# TikTok API Settings
+tiktok_api:
+  use_api: true  # Set to false to use headless browser approach
+  api_key: ""  # Your TikTok API key
+  api_secret: ""  # Your TikTok API secret
+  api_endpoint: "https://open.tiktokapis.com/v2/video/query/" 

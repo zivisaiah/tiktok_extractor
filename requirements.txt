@@ -1,0 +1,13 @@
+pandas>=2.0.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+pyyaml>=6.0.1
+tqdm>=4.65.0
+aiohttp>=3.8.5
+asyncio>=3.4.3
+playwright>=1.40.0
+python-dotenv>=1.0.0
+tiktok-api>=1.0.0
+yt-dlp>=2023.11.16 
