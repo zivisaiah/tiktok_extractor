@@ -35,8 +35,9 @@ python -m playwright install chromium
 
 5. Create configuration files:
 ```bash
+cp config.yaml.example config.yaml
 cp .env.example .env
-# Edit .env with your actual API credentials if using the API method
+# Edit config.yaml and .env with your actual settings
 ```
 
 ## Usage
@@ -50,6 +51,8 @@ https://www.tiktok.com/@username/video/87654321
 2. Run the processor:
 ```bash
 python run_tiktok_processor.py
+# Or use the shell script
+./run.sh
 ```
 
 3. Check the `output` directory for results:
@@ -65,8 +68,11 @@ Modify `config.yaml` to change settings:
 - `output_dir`: Directory for output files
 - `thumbnails_dir`: Subdirectory for thumbnails
 - `thumbnail_size`: Width and height of thumbnails
+- `browser_wait_timeout`: Timeout for browser operations in milliseconds
+- `browser_user_agent`: User agent string for the browser
 - `tiktok_api.use_api`: Set to true to use TikTok API, false for browser-based scraping
 
 ## Notes
 
-- Make sure to respect TikTok's terms of service and rate limits when using this tool. 
+- Make sure to respect TikTok's terms of service and rate limits when using this tool.
+- TikTok's web structure may change, which could affect the scraping functionality. 

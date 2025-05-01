@@ -1,12 +1,14 @@
-concurrent_requests: 5  # Number of concurrent requests to make
-batch_wait_time: 2     # Time to wait between batches in seconds
+concurrent_requests: 1  # Number of concurrent requests to make (reduced to avoid rate limiting)
+batch_wait_time: 5     # Time to wait between batches in seconds (increased)
 output_dir: "output"   # Directory to store thumbnails and output files
 thumbnails_dir: "thumbnails"  # Subdirectory for thumbnails
 thumbnail_size: [320, 180]  # Width, Height of thumbnails
+browser_wait_timeout: 30000  # Timeout for browser operations in milliseconds (30 seconds)
+browser_user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 
 # TikTok API Settings
 tiktok_api:
-  use_api: true  # Set to false to use headless browser approach
+  use_api: false  # Set to false to use headless browser approach
   api_key: ""  # Your TikTok API key
   api_secret: ""  # Your TikTok API secret
   api_endpoint: "https://open.tiktokapis.com/v2/video/query/" 
