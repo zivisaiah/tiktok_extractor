@@ -36,6 +36,13 @@ class TikTokProcessor:
         self.config['tiktok_api']['api_key'] = os.getenv('TIKTOK_API_KEY', self.config['tiktok_api'].get('api_key', ''))
         self.config['tiktok_api']['api_secret'] = os.getenv('TIKTOK_API_SECRET', self.config['tiktok_api'].get('api_secret', ''))
         
+        # Log API credentials (masked for security)
+        if self.config['tiktok_api']['use_api']:
+            api_key = self.config['tiktok_api']['api_key']
+            api_secret = self.config['tiktok_api']['api_secret']
+            logger.info(f"Using TikTok API with key: {api_key[:4]}...{api_key[-4:] if len(api_key) > 8 else ''}")
+            logger.info(f"Using TikTok API endpoint: {self.config['tiktok_api']['api_endpoint']}")
+        
         # Set default browser wait timeout if not specified in config
         if 'browser_wait_timeout' not in self.config:
             self.config['browser_wait_timeout'] = 10000  # Default 10 seconds
@@ -83,10 +90,34 @@ class TikTokProcessor:
 
     async def _get_video_metadata_api(self, video_id: str) -> Dict:
         """Get video metadata using TikTok API"""
+        logger.info(f"Fetching metadata for video ID: {video_id} using TikTok API")
+        
+        # TikTok API typically requires authentication using both API key and secret
+        # This could vary based on the specific API version you're using
+        api_key = self.config['tiktok_api']['api_key']
+        api_secret = self.config['tiktok_api']['api_secret']
+        
+        # Method 1: Use Bearer token (original method)
         headers = {
-            "Authorization": f"Bearer {self.config['tiktok_api']['api_key']}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
+        
+        # Method 2: Using API key in headers directly
+        # headers = {
+        #     "X-API-KEY": api_key,
+        #     "X-API-SECRET": api_secret,
+        #     "Content-Type": "application/json"
+        # }
+        
+        # Method 3: Using Basic auth with API key and secret
+        # import base64
+        # auth_str = f"{api_key}:{api_secret}"
+        # encoded_auth = base64.b64encode(auth_str.encode()).decode()
+        # headers = {
+        #     "Authorization": f"Basic {encoded_auth}",
+        #     "Content-Type": "application/json"
+        # }
         
         data = {
             "video_ids": [video_id],
@@ -105,14 +136,32 @@ class TikTokProcessor:
             ]
         }
         
-        async with self.session.post(
-            self.config['tiktok_api']['api_endpoint'],
-            headers=headers,
-            json=data
-        ) as response:
-            if response.status != 200:
-                raise Exception(f"API request failed: {response.status}")
-            return await response.json()
+        # Some APIs require the credentials in the request body
+        # data["api_key"] = api_key
+        # data["api_secret"] = api_secret
+        
+        logger.info(f"Sending request to: {self.config['tiktok_api']['api_endpoint']}")
+        logger.info(f"Request headers: {json.dumps(headers, default=str, indent=2)}")
+        logger.info(f"Request data: {json.dumps(data, default=str, indent=2)}")
+        
+        try:
+            async with self.session.post(
+                self.config['tiktok_api']['api_endpoint'],
+                headers=headers,
+                json=data
+            ) as response:
+                status = response.status
+                response_text = await response.text()
+                logger.info(f"API response status: {status}")
+                logger.info(f"API response: {response_text}")
+                
+                if status != 200:
+                    raise Exception(f"API request failed: {status}, Response: {response_text}")
+                
+                return json.loads(response_text)
+        except Exception as e:
+            logger.error(f"API request exception: {str(e)}")
+            raise
 
     async def _get_video_metadata_browser(self, url: str) -> Dict:
         """Get video metadata using headless browser"""
